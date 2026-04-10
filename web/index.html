@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ask To Repo</title>
+    <style>
+      :root {
+        --bg: #0e1116;
+        --panel: #171d26;
+        --panel-soft: #10151d;
+        --text: #e6edf3;
+        --muted: #97a3b3;
+        --accent: #1f9cf0;
+        --user: #115a85;
+        --assistant: #222a36;
+        --border: #2d3643;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 10% -10%, #1b2a42 0%, transparent 42%),
+          radial-gradient(circle at 95% 0%, #1f3d33 0%, transparent 35%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 2rem;
+      }
+
+      p {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+
+      .panel {
+        background: color-mix(in srgb, var(--panel) 88%, black);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 12px;
+        min-height: 72vh;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr 280px auto;
+        gap: 8px;
+        align-items: center;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 0.92rem;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        background: var(--panel-soft);
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 90px;
+        max-height: 200px;
+        resize: vertical;
+      }
+
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      #askBtn {
+        background: var(--accent);
+      }
+
+      #clearBtn {
+        background: #4b5563;
+      }
+
+      #messages {
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        background: linear-gradient(180deg, #0f141d 0%, #0c1017 100%);
+      }
+
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 32px 12px;
+      }
+
+      .msg {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 12px;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .bubble {
+        white-space: pre-wrap;
+        word-break: break-word;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+      }
+
+      .bubble.markdown {
+        white-space: normal;
+        line-height: 1.5;
+      }
+
+      .bubble.markdown > :first-child {
+        margin-top: 0;
+      }
+
+      .bubble.markdown > :last-child {
+        margin-bottom: 0;
+      }
+
+      .bubble.markdown p,
+      .bubble.markdown ul,
+      .bubble.markdown ol,
+      .bubble.markdown blockquote,
+      .bubble.markdown pre {
+        margin: 0.5rem 0;
+      }
+
+      .bubble.markdown ul,
+      .bubble.markdown ol {
+        padding-left: 1.2rem;
+      }
+
+      .bubble.markdown li {
+        margin: 0.2rem 0;
+      }
+
+      .bubble.markdown a {
+        color: #8fd3ff;
+      }
+
+      .bubble.markdown code {
+        font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, monospace;
+        background: #111824;
+        border: 1px solid #2e3a4b;
+        border-radius: 6px;
+        padding: 0.1rem 0.35rem;
+        font-size: 0.92em;
+      }
+
+      .bubble.markdown pre {
+        overflow-x: auto;
+        background: #111824;
+        border: 1px solid #2e3a4b;
+        border-radius: 8px;
+        padding: 0.7rem;
+      }
+
+      .bubble.markdown pre code {
+        background: transparent;
+        border: 0;
+        padding: 0;
+      }
+
+      .bubble.markdown blockquote {
+        border-left: 3px solid #3f546e;
+        margin-left: 0;
+        padding: 0.25rem 0 0.25rem 0.7rem;
+        color: #b8c6d9;
+      }
+
+      .msg.user {
+        justify-items: end;
+      }
+
+      .msg.user .bubble {
+        max-width: 88%;
+        background: color-mix(in srgb, var(--user) 70%, black);
+        border-color: color-mix(in srgb, var(--user) 80%, white 20%);
+      }
+
+      .msg.assistant {
+        justify-items: start;
+      }
+
+      .msg.assistant .bubble {
+        max-width: 92%;
+        background: var(--assistant);
+        border-color: #3a4453;
+      }
+
+      #status {
+        color: var(--muted);
+        min-height: 1.2rem;
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>Ask To Repo</h1>
+      <p>Ask support questions grounded in your private repository context.</p>
+
+      <section class="panel">
+        <div class="toolbar">
+          <div>
+            <label for="repoSelect">Repository</label>
+            <select id="repoSelect"></select>
+          </div>
+          <div>
+            <label for="modelSelect">Model</label>
+            <select id="modelSelect"></select>
+          </div>
+          <button id="clearBtn" type="button">Clear history</button>
+        </div>
+
+        <section id="messages" aria-live="polite"></section>
+
+        <textarea id="question" placeholder="Ask a question about this repository..."></textarea>
+        <div class="row">
+          <button id="askBtn" type="button">Send</button>
+        </div>
+        <div id="status"></div>
+      </section>
+    </main>
+    <script src="/vendor/marked/marked.umd.js"></script>
+    <script src="/vendor/dompurify/purify.min.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
