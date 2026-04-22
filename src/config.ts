@@ -10,6 +10,7 @@ const envSchema = z.object({
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(20),
   GITHUB_API_BASE_URL: z.string().url().default("https://api.github.com"),
   REPO_LOCAL_PATH: z.string().default(path.resolve(process.cwd(), ".local/repo-mirror")),
+  SESSIONS_FILE_PATH: z.string().default(path.resolve(process.cwd(), ".local/sessions/chats.json")),
   COPILOT_COMMAND: z.string().default("copilot"),
   COPILOT_DEFAULT_MODEL: z.string().default("gpt-5-mini"),
   COPILOT_AVAILABLE_MODELS_JSON: z
@@ -18,6 +19,11 @@ const envSchema = z.object({
   COPILOT_ARGS_JSON: z
     .string()
     .default('["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent"]'),
+  COPILOT_RESUME_ARGS_JSON: z
+    .string()
+    .default(
+      '["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent","--resume","{{copilotSessionId}}"]'
+    ),
   COPILOT_TIMEOUT_MS: z.coerce.number().int().positive().default(90_000),
 });
 

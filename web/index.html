@@ -33,7 +33,7 @@
       }
 
       .wrap {
-        max-width: 980px;
+        max-width: 90vw;
         margin: 0 auto;
         padding: 32px 16px;
       }
@@ -52,18 +52,462 @@
         background: color-mix(in srgb, var(--panel) 88%, black);
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 16px;
+        padding: 14px;
         display: grid;
-        grid-template-rows: auto 1fr auto;
-        gap: 12px;
+        grid-template-columns: 280px 280px 1fr;
+        gap: 14px;
         min-height: 72vh;
+      }
+
+      .sidebar {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: linear-gradient(180deg, #121923 0%, #0f151e 100%);
+        padding: 12px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 10px;
+        height: 82vh;
+        width: auto;
+        overflow-y: auto;
+      }
+
+      .repo-search {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        background: var(--panel-soft);
+        color: var(--text);
+      }
+
+      .repo-groups {
+        overflow-y: auto;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .repo-group-title {
+        margin: 0 0 6px;
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .repo-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .repo-item {
+        width: 100%;
+        text-align: left;
+        background: #172131;
+        border: 1px solid #2c3b4d;
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .repo-item.active {
+        background: #1f334a;
+        border-color: #4a85b8;
+      }
+
+      .repo-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .repo-meta {
+        margin-top: 4px;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+
+      .chat-list {
+        overflow-y: auto;
+        display: grid;
+        gap: 8px;
+        align-content: start;
+      }
+
+      .chats-column {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: linear-gradient(180deg, #121923 0%, #0f151e 100%);
+        padding: 12px;
+      }
+
+      .chat-panel {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        height: 100%;
+      }
+
+      .chat-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .chat-item {
+        width: 100%;
+        text-align: left;
+        background: #172131;
+        border: 1px solid #2c3b4d;
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .chat-item.active {
+        background: #1f334a;
+        border-color: #4a85b8;
+      }
+
+      .chat-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .chat-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto auto auto 1fr auto auto auto;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .integrations {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+
+      .integration-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        background: linear-gradient(180deg, #111824 0%, #0e141d 100%);
+        min-height: 120px;
+      }
+
+      .integration-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 8px;
+      }
+
+      .integration-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .integration-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .integration-controls select {
+        padding: 6px 8px;
+        border-radius: 8px;
+      }
+
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .pagination-status {
+        color: var(--muted);
+        font-size: 0.76rem;
+        min-width: 58px;
+        text-align: center;
+      }
+
+      .tiny-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .integration-list {
+        display: grid;
+        gap: 6px;
+        max-height: 30vh;
+        overflow-y: auto;
+      }
+
+      .integration-item {
+        border: 1px solid #2e3a4b;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 0.84rem;
+        background: #131b28;
+      }
+
+      .integration-item a {
+        color: #9ad7ff;
+        text-decoration: none;
+      }
+
+      .integration-item.pr-clickable {
+        cursor: pointer;
+      }
+
+      .integration-item.pr-clickable:hover {
+        border-color: #5a7a9f;
+      }
+
+      .integration-meta {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.76rem;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-right: 6px;
+      }
+
+      .status-chip.merged {
+        background: #154c37;
+        color: #9ff1cf;
+        border: 1px solid #2b8f6b;
+      }
+
+      .status-chip.closed {
+        background: #4a1622;
+        color: #ffc6d0;
+        border: 1px solid #a53a52;
+      }
+
+      .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(3, 8, 16, 0.66);
+        display: none;
+        align-items: stretch;
+        justify-content: flex-end;
+        z-index: 50;
+      }
+
+      .drawer-backdrop.open {
+        display: flex;
+      }
+
+      .drawer {
+        width: min(720px, 100%);
+        background: linear-gradient(180deg, #0f1622 0%, #0a111c 100%);
+        border-left: 1px solid #2d3a4d;
+        padding: 14px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 10px;
+        overflow: hidden;
+      }
+
+      .drawer-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .drawer-title {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .drawer-body {
+        overflow: auto;
+        display: grid;
+        gap: 10px;
+      }
+
+      .drawer-section {
+        border: 1px solid #2c3a4f;
+        border-radius: 10px;
+        padding: 10px;
+        background: #101825;
+      }
+
+      .drawer-section h4 {
+        margin: 0 0 8px;
+        font-size: 0.9rem;
+      }
+
+      .drawer-markdown {
+        line-height: 1.45;
+      }
+
+      .drawer-markdown > :first-child {
+        margin-top: 0;
+      }
+
+      .drawer-markdown > :last-child {
+        margin-bottom: 0;
+      }
+
+      .drawer-markdown p,
+      .drawer-markdown ul,
+      .drawer-markdown ol,
+      .drawer-markdown blockquote,
+      .drawer-markdown pre {
+        margin: 0.4rem 0;
+      }
+
+      .drawer-markdown ul,
+      .drawer-markdown ol {
+        padding-left: 1.2rem;
+      }
+
+      .drawer-markdown code {
+        font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, monospace;
+        background: #111824;
+        border: 1px solid #2e3a4b;
+        border-radius: 6px;
+        padding: 0.1rem 0.35rem;
+        font-size: 0.92em;
+      }
+
+      .drawer-markdown pre {
+        overflow-x: auto;
+        background: #111824;
+        border: 1px solid #2e3a4b;
+        border-radius: 8px;
+        padding: 0.7rem;
+      }
+
+      .drawer-markdown pre code {
+        background: transparent;
+        border: 0;
+        padding: 0;
+      }
+
+      .pr-file-item,
+      .pr-check-item {
+        border: 1px solid #2c3a4f;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+
+      .pr-file-item {
+        cursor: pointer;
+      }
+
+      .pr-file-item:hover {
+        border-color: #5a7a9f;
+      }
+
+      .diff-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(3, 8, 16, 0.72);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+        padding: 20px;
+      }
+
+      .diff-backdrop.open {
+        display: flex;
+      }
+
+      .diff-dialog {
+        width: min(980px, 100%);
+        max-height: 88vh;
+        background: linear-gradient(180deg, #0f1622 0%, #0a111c 100%);
+        border: 1px solid #2d3a4d;
+        border-radius: 12px;
+        padding: 14px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 10px;
+      }
+
+      .diff-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .diff-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+
+      .diff-body {
+        overflow: auto;
+        border: 1px solid #2c3a4f;
+        border-radius: 10px;
+        padding: 10px;
+        background: #101825;
+      }
+
+      .diff-code {
+        margin: 0;
+        font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, monospace;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        white-space: pre;
+      }
+
+      .diff-line.add {
+        color: #9ff1cf;
+      }
+
+      .diff-line.remove {
+        color: #ffc6d0;
+      }
+
+      .diff-line.meta {
+        color: #9ad7ff;
+      }
+
+      .small-muted {
+        color: var(--muted);
+        font-size: 0.78rem;
       }
 
       .toolbar {
         display: grid;
-        grid-template-columns: 1fr 280px auto;
+        grid-template-columns: 1fr;
         gap: 8px;
         align-items: center;
+      }
+
+      .hidden {
+        display: none;
       }
 
       label {
@@ -94,6 +538,21 @@
         gap: 8px;
       }
 
+      .compose-controls {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .model-inline {
+        flex: 1;
+        max-width: 360px;
+      }
+
+      .compose-controls .row {
+        margin-left: auto;
+      }
+
       button {
         border: 0;
         border-radius: 10px;
@@ -103,12 +562,29 @@
         font-weight: 600;
       }
 
-      #askBtn {
+      #askBtn, #refreshPullsBtn, #refreshClosedPullsBtn, #refreshArtifactsBtn {
         background: var(--accent);
       }
 
-      #clearBtn {
+      #closedPullPrevBtn,
+      #closedPullNextBtn {
+        background: #334155;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
+
+      #closedPullPrevBtn:disabled,
+      #closedPullNextBtn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #newChatBtn {
         background: #4b5563;
+      }
+
+      #pinTitleBtn {
+        background: #6b7280;
       }
 
       #messages {
@@ -233,6 +709,33 @@
         min-height: 1.2rem;
         font-size: 0.92rem;
       }
+
+      @media (max-width: 980px) {
+        .panel {
+          grid-template-columns: 1fr;
+        }
+
+        .toolbar {
+          grid-template-columns: 1fr;
+        }
+
+        .integrations {
+          grid-template-columns: 1fr;
+        }
+
+        .compose-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .model-inline {
+          max-width: none;
+        }
+
+        .compose-controls .row {
+          margin-left: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -241,27 +744,123 @@
       <p>Ask support questions grounded in your private repository context.</p>
 
       <section class="panel">
-        <div class="toolbar">
-          <div>
-            <label for="repoSelect">Repository</label>
-            <select id="repoSelect"></select>
-          </div>
-          <div>
-            <label for="modelSelect">Model</label>
-            <select id="modelSelect"></select>
-          </div>
-          <button id="clearBtn" type="button">Clear history</button>
-        </div>
+        <aside class="sidebar">
+          <h3 class="repo-group-title">Repositories</h3>
+          <input id="repoSearchInput" class="repo-search" type="search" placeholder="Search repositories..." />
+          <section class="repo-groups" aria-live="polite">
+            <div>
+              <h4 class="repo-group-title">Active (Cloned)</h4>
+              <div id="activeRepoList" class="repo-list"></div>
+            </div>
+            <div>
+              <h4 class="repo-group-title">Other Repositories</h4>
+              <div id="otherRepoList" class="repo-list"></div>
+            </div>
+          </section>
+        </aside>
 
-        <section id="messages" aria-live="polite"></section>
+        <section class="chats-column">
+          <section class="chat-panel">
+            <div class="chat-panel-head">
+              <span class="integration-title">Chats</span>
+              <button id="newChatBtn" type="button">New chat</button>
+            </div>
+            <section id="chatList" class="chat-list" aria-live="polite"></section>
+          </section>
+        </section>
 
-        <textarea id="question" placeholder="Ask a question about this repository..."></textarea>
-        <div class="row">
-          <button id="askBtn" type="button">Send</button>
-        </div>
-        <div id="status"></div>
+        <section class="main">
+          <div class="toolbar">
+            <div class="hidden">
+              <label for="repoSelect">Repository</label>
+              <select id="repoSelect"></select>
+            </div>
+          </div>
+
+          <section class="integrations">
+            <article class="integration-card">
+              <div class="integration-head">
+                <span class="integration-title">Active Pull Requests</span>
+                <button id="refreshPullsBtn" type="button" style="background: ;">Refresh</button>
+              </div>
+              <div id="pullsList" class="integration-list"></div>
+            </article>
+
+            <article class="integration-card">
+              <div class="integration-head">
+                <span class="integration-title">Closed Pull Requests</span>
+                <button id="refreshClosedPullsBtn" type="button">Refresh</button>
+              </div>
+              <div class="integration-controls">
+                <input id="closedPullSearchInput" type="search" class="repo-search" placeholder="Search closed PRs..." />
+              </div>
+              <div id="closedPullsList" class="integration-list"></div>
+              <div class="pagination-controls">
+                <button id="closedPullPrevBtn" type="button">Prev</button>
+                <span id="closedPullPageInfo" class="pagination-status">Page 1</span>
+                <button id="closedPullNextBtn" type="button">Next</button>
+              </div>
+            </article>
+
+            <article class="integration-card">
+              <div class="integration-head">
+                <span class="integration-title">Generated Artifacts</span>
+                <button id="refreshArtifactsBtn" type="button">Refresh</button>
+              </div>
+              <div class="integration-controls">
+                <select id="artifactRunFilter" aria-label="Filter by workflow run">
+                  <option value="">All runs</option>
+                </select>
+                <label class="tiny-label" for="artifactExpiredFilter">
+                  <input id="artifactExpiredFilter" type="checkbox" />
+                  Include expired
+                </label>
+              </div>
+              <div id="artifactsList" class="integration-list"></div>
+            </article>
+          </section>
+
+          <section id="messages" aria-live="polite"></section>
+
+          <textarea id="question" placeholder="Ask a question about this repository..."></textarea>
+          <div class="compose-controls">
+            <div class="model-inline">
+              <label for="modelSelect">Model</label>
+              <select id="modelSelect"></select>
+            </div>
+            <div class="row">
+              <button id="askBtn" type="button">Send</button>
+              <button id="pinTitleBtn" type="button">Pin title</button>
+            </div>
+          </div>
+          <div id="status"></div>
+        </section>
       </section>
     </main>
+    <div id="prDrawerBackdrop" class="drawer-backdrop" aria-hidden="true">
+      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="prDrawerTitle">
+        <div class="drawer-head">
+          <div id="prDrawerTitle" class="drawer-title">Pull Request</div>
+          <button id="closePrDrawerBtn" type="button">Close</button>
+        </div>
+        <div id="prDrawerMeta" class="small-muted"></div>
+        <div id="prDrawerBody" class="drawer-body"></div>
+      </aside>
+    </div>
+
+    <div id="diffDialogBackdrop" class="diff-backdrop" aria-hidden="true">
+      <section class="diff-dialog" role="dialog" aria-modal="true" aria-labelledby="diffDialogTitle">
+        <div class="diff-header">
+          <div id="diffDialogTitle" class="diff-title">File Diff</div>
+          <button id="closeDiffDialogBtn" type="button">Close</button>
+        </div>
+        <div id="diffDialogMeta" class="small-muted"></div>
+        <div class="diff-body">
+          <pre id="diffDialogContent" class="diff-code"></pre>
+        </div>
+      </section>
+    </div>
+
     <script src="/vendor/marked/marked.umd.js"></script>
     <script src="/vendor/dompurify/purify.min.js"></script>
     <script src="/app.js"></script>

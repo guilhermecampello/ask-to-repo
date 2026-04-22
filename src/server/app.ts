@@ -10,6 +10,8 @@ import { healthRouter } from "./routes/health";
 import { syncRouter } from "./routes/sync";
 import { reposRouter } from "./routes/repos";
 import { modelsRouter } from "./routes/models";
+import { chatsRouter } from "./routes/chats";
+import { githubRouter } from "./routes/github";
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use(pinoHttp({ logger }));
 app.use("/api", healthRouter);
 app.use("/api", reposRouter);
 app.use("/api", modelsRouter);
+app.use("/api", chatsRouter);
+app.use("/api", githubRouter);
 app.use("/api", askRouter);
 app.use("/api", syncRouter);
 app.use("/vendor/marked", express.static(path.resolve(process.cwd(), "node_modules/marked/lib")));
