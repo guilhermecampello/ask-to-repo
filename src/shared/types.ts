@@ -8,6 +8,7 @@ export type AskRequest = {
 export type AskStreamEvent =
   | { type: "status"; message: string }
   | { type: "chunk"; content: string }
+  | { type: "tool_activity"; content: string }
   | { type: "error"; message: string }
   | { type: "done"; code: number; chatId: string; copilotSessionId: string | null };
 
@@ -29,6 +30,7 @@ export type ChatMessage = {
   content: string;
   model: string;
   createdAt: number;
+  toolActivity?: string;
 };
 
 export type ChatDetail = {
@@ -85,9 +87,16 @@ export type RepoSummary = {
   isCloned: boolean;
 };
 
+export type ModelOption = {
+  id: string;
+  label: string;
+  requestMultiplier: string;
+};
+
 export type ModelsResponse = {
   defaultModel: string;
   models: string[];
+  modelOptions: ModelOption[];
 };
 
 export type PullRequestSummary = {

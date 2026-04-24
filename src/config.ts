@@ -18,11 +18,11 @@ const envSchema = z.object({
     .default('["gpt-5-mini","raptor-mini","gpt-5","claude-sonnet-4.5"]'),
   COPILOT_ARGS_JSON: z
     .string()
-    .default('["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent"]'),
+    .default('["--prompt","{{prompt}}","--allow-all-tools"]'),
   COPILOT_RESUME_ARGS_JSON: z
     .string()
     .default(
-      '["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent","--resume","{{copilotSessionId}}"]'
+      '["--prompt","{{prompt}}","--allow-all-tools","--resume","{{copilotSessionId}}"]'
     ),
   COPILOT_TIMEOUT_MS: z.coerce.number().int().positive().default(90_000),
 });
@@ -37,24 +37,36 @@ if (!parsed.success) {
 
 export const config = parsed.data;
 
+export type AvailableModelOption = {
+  id: string;
+  label: string;
+  requestMultiplier: string;
+};
+
+const AVAILABLE_MODEL_OPTIONS: AvailableModelOption[] = [
+  { id: "claude-haiku-4.5", label: "Claude Haiku 4.5", requestMultiplier: "0.33x" },
+  { id: "claude-sonnet-4", label: "Claude Sonnet 4", requestMultiplier: "1x" },
+  { id: "claude-sonnet-4.5", label: "Claude Sonnet 4.5", requestMultiplier: "1x" },
+  { id: "claude-sonnet-4.6", label: "Claude Sonnet 4.6", requestMultiplier: "1x" },
+  { id: "gemini-2.5-pro", label: "Gemini 2.5 Pro", requestMultiplier: "1x" },
+  { id: "gemini-3-flash", label: "Gemini 3 Flash (Preview)", requestMultiplier: "0.33x" },
+  { id: "gemini-3.1-pro", label: "Gemini 3.1 Pro (Preview)", requestMultiplier: "1x" },
+  { id: "gpt-4.1", label: "GPT-4.1", requestMultiplier: "0x" },
+  { id: "gpt-4o", label: "GPT-4o", requestMultiplier: "0x" },
+  { id: "gpt-5-mini", label: "GPT-5 mini", requestMultiplier: "0x" },
+  { id: "gpt-5.2", label: "GPT-5.2", requestMultiplier: "1x" },
+  { id: "gpt-5.2-codex", label: "GPT-5.2-Codex", requestMultiplier: "1x" },
+  { id: "gpt-5.3-codex", label: "GPT-5.3-Codex", requestMultiplier: "1x" },
+  { id: "gpt-5.4", label: "GPT-5.4", requestMultiplier: "1x" },
+  { id: "gpt-5.4-mini", label: "GPT-5.4 mini", requestMultiplier: "0.33x" },
+  { id: "grok-code-fast-1", label: "Grok Code Fast 1", requestMultiplier: "0.25x" },
+  { id: "raptor-mini", label: "Raptor mini (Preview)", requestMultiplier: "0x" },
+];
+
+export function getAvailableModelOptions(): AvailableModelOption[] {
+  return AVAILABLE_MODEL_OPTIONS.map((option) => ({ ...option }));
+}
+
 export function getAvailableModels(): string[] {
-  try {
-    const parsed = JSON.parse(config.COPILOT_AVAILABLE_MODELS_JSON);
-    if (!Array.isArray(parsed)) {
-      throw new Error("COPILOT_AVAILABLE_MODELS_JSON must be an array");
-    }
-
-    const models = parsed
-      .filter((value): value is string => typeof value === "string")
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
-
-    if (!models.includes(config.COPILOT_DEFAULT_MODEL)) {
-      models.unshift(config.COPILOT_DEFAULT_MODEL);
-    }
-
-    return Array.from(new Set(models));
-  } catch (error) {
-    throw new Error(`Invalid COPILOT_AVAILABLE_MODELS_JSON: ${(error as Error).message}`);
-  }
+  return getAvailableModelOptions().map((option) => option.id);
 }

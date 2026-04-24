@@ -86,10 +86,6 @@ function buildArgs(prompt: string, model?: string, copilotSessionId?: string | n
     if (!hasApprovalFlag) {
       normalized.push("--allow-all-tools");
     }
-
-    if (!normalized.includes("--silent")) {
-      normalized.push("--silent");
-    }
   }
 
   const hasModelFlag = normalized.includes("--model");

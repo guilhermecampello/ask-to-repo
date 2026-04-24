@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { ensureMirrorReady } from "../../repo/mirrorManager";
 import { runCopilotSession } from "../../copilot/sessionRunner";
+import { OutputStreamParser } from "../../copilot/outputParser";
 import { AskRequest, AskStreamEvent } from "../../shared/types";
 import { sanitizeOutputChunk, truncateIfNeeded } from "../security/outputPolicy";
 import { askRateLimit } from "../security/rateLimit";
 import { getRepoByFullName } from "../../github/client";
-import { config, getAvailableModels } from "../../config";
+import { config } from "../../config";
 import { appendChatMessage, ensureChatSessionId, getChatById, updateChatSessionId, updateChatTitleIfNeeded } from "../../session/chatStore";
 import { logger } from "../../logger";
 
@@ -127,7 +128,6 @@ askRouter.post("/ask", askRateLimit, async (req, res) => {
   const repoFullName = body?.repoFullName?.trim();
   const chatId = body?.chatId?.trim();
   const requestedModel = body?.model?.trim();
-  const availableModels = getAvailableModels();
   const effectiveModel = requestedModel && requestedModel.length > 0 ? requestedModel : config.COPILOT_DEFAULT_MODEL;
   const requestLogger = logger.child({
     route: "POST /api/ask",
@@ -155,14 +155,6 @@ askRouter.post("/ask", askRateLimit, async (req, res) => {
   if (!chatId) {
     requestLogger.warn("Rejected ask request without chatId");
     res.status(400).json({ error: "Field 'chatId' is required." });
-    return;
-  }
-
-  if (!availableModels.includes(effectiveModel)) {
-    requestLogger.warn({ availableModels }, "Rejected ask request with invalid model");
-    res.status(400).json({
-      error: `Invalid model '${effectiveModel}'. Allowed models: ${availableModels.join(", ")}`,
-    });
     return;
   }
 
@@ -233,7 +225,9 @@ askRouter.post("/ask", askRateLimit, async (req, res) => {
     sendSseEvent(res, { type: "status", message: "Starting Copilot CLI session..." });
     requestLogger.info("Starting Copilot streaming session");
 
+    const parser = new OutputStreamParser(requestLogger);
     let aggregate = "";
+    let toolActivityAggregate = "";
     let streamedChunkCount = 0;
     const result = await runCopilotSession({
       prompt: effectivePrompt,
@@ -244,18 +238,37 @@ askRouter.post("/ask", askRateLimit, async (req, res) => {
       onChunk: (chunk) => {
         streamedChunkCount += 1;
         const safeChunk = sanitizeOutputChunk(chunk);
-        aggregate += safeChunk;
-        const trunc = truncateIfNeeded(aggregate);
-        if (trunc.truncated) {
-          aggregate = trunc.value;
-          requestLogger.warn({ streamedChunkCount, aggregateLength: aggregate.length }, "Response exceeded output policy and was truncated");
-          sendSseEvent(res, { type: "chunk", content: trunc.value });
-          abortController.abort();
-          return;
+        requestLogger.debug({ chunkIndex: streamedChunkCount, rawLen: chunk.length }, "parser:raw-chunk");
+        const segments = parser.push(safeChunk);
+        for (const seg of segments) {
+          if (seg.kind === "tool") {
+            toolActivityAggregate += seg.content;
+            sendSseEvent(res, { type: "tool_activity", content: seg.content });
+          } else {
+            aggregate += seg.content;
+            const trunc = truncateIfNeeded(aggregate);
+            if (trunc.truncated) {
+              aggregate = trunc.value;
+              requestLogger.warn({ streamedChunkCount, aggregateLength: aggregate.length }, "Response exceeded output policy and was truncated");
+              sendSseEvent(res, { type: "chunk", content: trunc.value });
+              abortController.abort();
+              return;
+            }
+            sendSseEvent(res, { type: "chunk", content: seg.content });
+          }
         }
-        sendSseEvent(res, { type: "chunk", content: safeChunk });
       },
     });
+
+    for (const seg of parser.flush()) {
+      if (seg.kind === "tool") {
+        toolActivityAggregate += seg.content;
+        sendSseEvent(res, { type: "tool_activity", content: seg.content });
+      } else if (seg.content) {
+        aggregate += seg.content;
+        sendSseEvent(res, { type: "chunk", content: seg.content });
+      }
+    }
 
     if (result.copilotSessionId) {
       await updateChatSessionId(chatId, result.copilotSessionId);
@@ -266,6 +279,7 @@ askRouter.post("/ask", askRateLimit, async (req, res) => {
       role: "assistant",
       content: aggregate,
       model: effectiveModel,
+      toolActivity: toolActivityAggregate || undefined,
     });
     if (chatAfterAssistantMessage) {
       await refreshChatTitleIfNeeded(chatAfterAssistantMessage, requestLogger, "assistant-message");

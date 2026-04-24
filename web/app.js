@@ -44,7 +44,7 @@ let messages = [];
 let activeChatId = "";
 let isBusy = false;
 let defaultModel = "gpt-5-mini";
-let availableModels = ["gpt-5-mini"];
+let availableModels = [{ id: "gpt-5-mini", label: "GPT-5 mini", requestMultiplier: "0x" }];
 let repos = [];
 let repoSearchTerm = "";
 let activePullRequests = [];
@@ -224,6 +224,19 @@ function renderMessages() {
     bubble.className = "bubble";
 
     if (message.role === "assistant") {
+      if (message.toolActivity) {
+        const details = document.createElement("details");
+        details.className = "tool-activity";
+        const summary = document.createElement("summary");
+        const toolLineCount = message.toolActivity.split("\n").filter(Boolean).length;
+        summary.textContent = `${toolLineCount} tool call line${toolLineCount === 1 ? "" : "s"}`;
+        const pre = document.createElement("pre");
+        pre.textContent = message.toolActivity;
+        details.appendChild(summary);
+        details.appendChild(pre);
+        wrapper.appendChild(details);
+      }
+
       bubble.classList.add("markdown");
       const assistantContent = message.content || "Thinking...";
       bubble.innerHTML = renderAssistantMarkdown(assistantContent);
@@ -810,20 +823,25 @@ async function loadRepos() {
 function renderModelOptions() {
   modelSelectEl.innerHTML = "";
 
+  const defaultModelOption = availableModels.find((model) => model.id === defaultModel);
+  const defaultLabel = defaultModelOption
+    ? `${defaultModelOption.label} · ${defaultModelOption.requestMultiplier}`
+    : defaultModel;
+
   const defaultOption = document.createElement("option");
   defaultOption.value = "";
-  defaultOption.textContent = `Default (${defaultModel})`;
+  defaultOption.textContent = `Default (${defaultLabel})`;
   modelSelectEl.appendChild(defaultOption);
 
   for (const model of availableModels) {
     const option = document.createElement("option");
-    option.value = model;
-    option.textContent = model;
+    option.value = model.id;
+    option.textContent = `${model.label} · ${model.requestMultiplier}`;
     modelSelectEl.appendChild(option);
   }
 
   const savedModel = localStorage.getItem(SELECTED_MODEL_KEY);
-  if (savedModel && availableModels.includes(savedModel)) {
+  if (savedModel && availableModels.some((model) => model.id === savedModel)) {
     modelSelectEl.value = savedModel;
   } else {
     modelSelectEl.value = "";
@@ -833,13 +851,11 @@ function renderModelOptions() {
 async function loadModels() {
   const payload = await apiJson("/api/models");
   defaultModel = typeof payload.defaultModel === "string" ? payload.defaultModel : "gpt-5-mini";
-  availableModels = Array.isArray(payload.models)
-    ? payload.models.filter((value) => typeof value === "string")
-    : [defaultModel];
-
-  if (!availableModels.includes(defaultModel)) {
-    availableModels.unshift(defaultModel);
-  }
+  availableModels = Array.isArray(payload.modelOptions)
+    ? payload.modelOptions.filter(
+        (value) => value && typeof value.id === "string" && typeof value.label === "string" && typeof value.requestMultiplier === "string"
+      )
+    : [];
 
   renderModelOptions();
 }
@@ -978,6 +994,7 @@ function appendLocalMessage(role, content, model) {
     content,
     model,
     createdAt: Date.now(),
+    toolActivity: "",
   };
   messages.push(message);
   renderMessages();
@@ -990,6 +1007,15 @@ function updateLocalMessageContent(id, content) {
     return;
   }
   msg.content = content;
+  renderMessages();
+}
+
+function updateLocalMessageToolActivity(id, content) {
+  const msg = messages.find((item) => item.id === id);
+  if (!msg) {
+    return;
+  }
+  msg.toolActivity = (msg.toolActivity || "") + content;
   renderMessages();
 }
 
@@ -1078,6 +1104,10 @@ async function askQuestion() {
       if (payload.type === "chunk") {
         const current = messages.find((item) => item.id === assistantMessageId)?.content || "";
         updateLocalMessageContent(assistantMessageId, current + payload.content);
+      }
+
+      if (payload.type === "tool_activity") {
+        updateLocalMessageToolActivity(assistantMessageId, payload.content);
       }
 
       if (payload.type === "error") {

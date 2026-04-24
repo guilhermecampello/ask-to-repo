@@ -769,6 +769,50 @@
         border-color: #3a4453;
       }
 
+      .tool-activity {
+        max-width: 92%;
+        border: 1px solid #2d3a4a;
+        border-radius: 8px;
+        background: #0d1520;
+        font-size: 0.8rem;
+        overflow: hidden;
+      }
+
+      .tool-activity summary {
+        cursor: pointer;
+        padding: 5px 10px;
+        color: var(--muted);
+        user-select: none;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .tool-activity summary::before {
+        content: "▶";
+        font-size: 0.65rem;
+        transition: transform 0.15s;
+      }
+
+      .tool-activity[open] summary::before {
+        transform: rotate(90deg);
+      }
+
+      .tool-activity pre {
+        margin: 0;
+        padding: 8px 10px;
+        border-top: 1px solid #1e2d3d;
+        font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, monospace;
+        font-size: 0.78rem;
+        color: #7a9ab8;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
       #status {
         color: var(--muted);
         min-height: 1.2rem;

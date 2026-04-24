@@ -10,6 +10,7 @@ export type ChatMessage = {
   content: string;
   model: string;
   createdAt: number;
+  toolActivity?: string;
 };
 
 export type ChatRecord = {
@@ -185,6 +186,7 @@ export async function appendChatMessage(input: {
   role: "user" | "assistant";
   content: string;
   model: string;
+  toolActivity?: string;
 }): Promise<ChatRecord | null> {
   const now = Date.now();
 
@@ -195,13 +197,17 @@ export async function appendChatMessage(input: {
       return null;
     }
 
-    chat.messages.push({
+    const message: ChatMessage = {
       id: randomUUID(),
       role: input.role,
       content: input.content,
       model: input.model,
       createdAt: now,
-    });
+    };
+    if (input.toolActivity) {
+      message.toolActivity = input.toolActivity;
+    }
+    chat.messages.push(message);
     chat.updatedAt = now;
     chat.model = input.model;
     logger.debug(
@@ -210,6 +216,7 @@ export async function appendChatMessage(input: {
         role: input.role,
         model: input.model,
         contentLength: input.content.length,
+        toolActivityLength: input.toolActivity?.length ?? 0,
         messageCount: chat.messages.length,
       },
       "Appended chat message"

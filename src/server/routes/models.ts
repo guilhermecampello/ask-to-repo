@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { config, getAvailableModels } from "../../config";
+import { config, getAvailableModelOptions, getAvailableModels } from "../../config";
 import { ModelsResponse } from "../../shared/types";
 
 export const modelsRouter = Router();
@@ -9,6 +9,7 @@ modelsRouter.get("/models", (_req, res) => {
     const payload: ModelsResponse = {
       defaultModel: config.COPILOT_DEFAULT_MODEL,
       models: getAvailableModels(),
+      modelOptions: getAvailableModelOptions(),
     };
 
     res.json(payload);

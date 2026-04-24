@@ -107,8 +107,8 @@ Query params:
 Example:
 
 ```env
-COPILOT_ARGS_JSON=["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent"]
-COPILOT_RESUME_ARGS_JSON=["--prompt","{{prompt}}","--reasoning-effort","medium","--allow-all-tools","--silent","--resume","{{copilotSessionId}}"]
+COPILOT_ARGS_JSON=["--prompt","{{prompt}}","--allow-all-tools"]
+COPILOT_RESUME_ARGS_JSON=["--prompt","{{prompt}}","--allow-all-tools","--resume","{{copilotSessionId}}"]
 ```
 
 If your installed Copilot CLI uses a different command shape, update this value accordingly.

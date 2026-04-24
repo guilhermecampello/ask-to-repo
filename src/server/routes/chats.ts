@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { config, getAvailableModels } from "../../config";
+import { config } from "../../config";
 import {
   ChatRecord,
   createChat,
@@ -61,14 +61,6 @@ chatsRouter.post("/chats", async (req, res) => {
   }
 
   const model = requestedModel && requestedModel.length > 0 ? requestedModel : config.COPILOT_DEFAULT_MODEL;
-  const availableModels = getAvailableModels();
-  if (!availableModels.includes(model)) {
-    logger.warn({ repoFullName, model }, "Rejected chat creation request with invalid model");
-    res.status(400).json({
-      error: `Invalid model '${model}'. Allowed models: ${availableModels.join(", ")}`,
-    });
-    return;
-  }
 
   const title = requestedTitle && requestedTitle.length > 0 ? requestedTitle : `Chat ${new Date().toLocaleString()}`;
 
